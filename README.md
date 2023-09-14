@@ -41,6 +41,8 @@ Der Link "Wetterdaten abrufen" öffnet "weather.psp". Die Seite zeigt Wetterdate
 
 **lwGetWeather.sh** ist für einen Cronjob gedacht, der regelmäßig die Wetterdaten abholt und in die Calc-Tabelle schreibt. Tragen Sie den API-Key in "lwGetWeather.py" ein.
 
+![402_06_Wetterdaten](https://github.com/Myria-de/LibreOffice-Server/assets/6861591/c3a8c6b7-07a6-416d-81ac-0038ddcb3919)
+
 ## Programme als Dienst starten
 Bei regelmäßiger Nutzung ist es bequemer, Libre Office und die Scripte über einen Systemd-Dienst zu starten. Vorbereitete Dateien finden Sie im Ordner "Services".
 
