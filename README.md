@@ -1,7 +1,7 @@
 # LibreOffice im Servermodus nutzen
 Der Server-Modus von Libre Office bietet Schnittstellen, über die sich die Funktionen des Büropakets per Script nutzen lassen. Mit einem Webserver kann der Zugriff auch über das Netzwerk erfolgen.
 ## Libre Office und Python-Module einrichten
-Kopieren Sie alle Dateien in Ihr Home-Verzeichnis, beispielsweise in den Ordner "~/lwPDF".
+Laden Sie das Archiv über https://github.com/Myria-de/LibreOffice-Server/archive/refs/tags/v2.4.tar.gz herunter. Entpacken/kopieren Sie alle Dateien in Ihr Home-Verzeichnis, beispielsweise in den Ordner "~/lwPDF".
 
 Die Installation von Libre Office erfolgt über ein Bash-Script, das Sie im Terminal im Ordner "~/lwPDF/install" mit 
 ```
