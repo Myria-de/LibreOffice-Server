@@ -80,6 +80,7 @@ Den Platzhalter "[host]" ersetzen Sie durch den Namen des Servers oder seine IP-
 
 **Unter Windows:** 
 Verwenden Sie die Aufgabenplanung zum Start der Anwendungen. Erstellen Sie die Aufgabe in einer Eingabeaufforderung.
+
 **pcwPDF_Server:**
 ```
 schtasks /create /tn "RunPDFServer" /sc onstart /ru system /tr "cmd.exe /c C:\pcwPDF\pcwPDF_Server.bat"
