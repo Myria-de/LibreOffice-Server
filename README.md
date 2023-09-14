@@ -27,7 +27,49 @@ Die Webanwendung "lwPDFServer" enthält zwei weitere Funktionen, die Sie über d
 
 Der Link "Wetterdaten abrufen" öffnet "weather.psp". Die Seite zeigt Wetterdaten aus der Calc-Datei "~/lwPDF/lwPDF/MyContext/data/Wetter.ods" als Tabelle und darunter ein Diagramm mit dem mittleren Temperaturverlauf. Per Klick auf "Wetterdaten abholen" lädt das Script aktuelle Daten über http://api.openweathermap.org herunter. Damit das funktioniert, benötigen Sie einen kostenlosen API-Key, den Sie nach der Anmeldung bei https://openweathermap.org erhalten. Tippen Sie den Schlüssel im Konfigurationsabschnitt von "weather.psp" hinter "API_key" ein. Hinter "Standort" geben Sie den Ort an, für den Sie die Wetterdaten abrufen wollen.
 
+**lwGetWeather.sh** ist für einen Cronjob gedacht, der regelmäßig die Wetterdaten abholt und in die Calc-Tabelle schreibt. Tragen Sie den API-Key in "lwGetWeather.py" ein.
 
+## Programme als Dienst starten
+Bei regelmäßiger Nutzung ist es bequemer, Libre Office und die Scripte über einen Systemd-Dienst zu starten. Vorbereitete Dateien finden Sie im Ordner "Services".
 
+Die Datei "soffice.service" startet Libre Office. Der Inhalt muss für das System angepasst werden. Hinter "User=" und "Group=" gehören Benutzername und Gruppe des Linux-Kontos, das den Dienst starten soll. Administrative Rechte sind nicht erforderlich und aus Sicherheitsgründen auch nicht erwünscht. Die Variable "$HOME" verweist in allen Dienste auf das Home-Verzeichnis dieses Benutzers. Passen Sie die Pfadangaben dahinter an, wenn Sie einen anderen Ordner als "lwPDF" verwenden.
 
+Mit der Zeile
+```
+ExecStart=/usr/bin/bash -c "exec $HOME/lwPDF/libreoffice/program/soffice --headless --nologo --nodefault --nofirststartwizard --accept='socket,host=localhost,port=2002;urp;'"
+```
+wird Libre Office gestartet.
+
+Kopieren Sie die angepasste Datei in den Ordner "/etc/systemd/system". Aktivieren und starten Sie den Dienst mit 
+```
+sudo systemctl enable soffice.service
+sudo systemctl start soffice.service
+```
+Spätere Änderungen in der Datei teilen Sie dem System über 
+```
+sudo systemctl daemon-reload
+```
+mit.
+
+Die Datei "webware.service" ist ähnlich aufgebaut und muss vor der Verwendung ebenfalls angepasst, aktiviert und gestartet werden. Der Dienst startet das Script mit
+```
+ExecStart=/bin/bash -c '${HOME}/lwPDF/lwPDFServer.sh'
+```
+In der Datei "~/lwPDF/lwPDFServer.sh" passen Sie den Aufruf von Webware für den Dienst an. Die Befehlszeile lautet
+```
+exec $SCRIPTPATH/libreoffice/program/python $SCRIPTPATH/libreoffice/program/$PYVER/bin/webware serve -l [host] --prod
+```
+Den Platzhalter "[host]" ersetzen Sie durch den Namen des Servers oder seine IP-Nummer. Ohne diese Angabe ist der Server nur über "http://127.0.0.1:8080/" (localhost) erreichbar.
+
+**Bitte beachten Sie:** Webware speichert die Scripte in einem Cache. Wenn Sie eine PSP-Datei anpassen, starten Sie den Dienst mit
+```
+sudo systemctl restart webware.service
+```
+neu.
+
+Der Dienst "lwPDFKonverter.service" enthält für den Programmstart die Zeile
+```
+ExecStart=/bin/bash -c "cd $HOME/lwPDF; exec libreoffice/program/python lwPDFConverter.py"
+```
+Es ist notwendig, zuerst in das Arbeitsverzeichnis "lwPDF" zu wechseln, damit das Python-Script die Ordner "in" und "out" findet.
 
