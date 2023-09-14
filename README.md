@@ -2,7 +2,7 @@
 Der Server-Modus von Libre Office bietet Schnittstellen, über die sich die Funktionen des Büropakets per Script nutzen lassen. Mit einem Webserver kann der Zugriff auch über das Netzwerk erfolgen.
 ## Libre Office und Python-Module einrichten
 **Für Windows:** Laden Sie das Archiv [
-PC-WELT PDF-Server](https://www.myria.de/?sdm_process_download=1&download_id=323748) herunter. LibreOffice-Portable und die Python-Module sind bereits enthalten. Die Python-Scripte sind mit denen für Linux weitestgehend identisch. Entpacken Sie das Archiv in den Ordner "C:\pcwPDF". Die PSP-Dateien aus dem Ordner "pcwPDF/MyContext/" müssen bei Änderungen mit der Codierung "ANSI" gespeichert werden und nicht als "UTF-8".
+PC-WELT PDF-Server](https://www.myria.de/?sdm_process_download=1&download_id=323748) herunter. LibreOffice-Portable und die Python-Module sind bereits enthalten. Die Python-Scripte sind mit denen für Linux weitestgehend identisch. Entpacken Sie das Archiv in den Ordner "C:\pcwPDF". Die PSP-Dateien aus dem Ordner "pcwPDF/MyContext/" müssen bei Änderungen mit der Codierung "ANSI" gespeichert werden und nicht als "UTF-8". Zum Start der Anwendungen gibt es entsprechende Batch-Dateien.
 
 **Für Linux:** Laden Sie das Archiv über https://github.com/Myria-de/LibreOffice-Server/archive/refs/tags/v2.4.tar.gz herunter. Entpacken/kopieren Sie alle Dateien in Ihr Home-Verzeichnis, beispielsweise in den Ordner "~/lwPDF".
 
