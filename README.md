@@ -77,6 +77,7 @@ In der Datei "~/lwPDF/lwPDFServer.sh" passen Sie den Aufruf von Webware für den
 exec $SCRIPTPATH/libreoffice/program/python $SCRIPTPATH/libreoffice/program/$PYVER/bin/webware serve -l [host] --prod
 ```
 Den Platzhalter "[host]" ersetzen Sie durch den Namen des Servers oder seine IP-Nummer. Ohne diese Angabe ist der Server nur über "http://127.0.0.1:8080/" (localhost) erreichbar.
+
 **Bitte beachten Sie:** Webware speichert die Scripte in einem Cache. Wenn Sie eine PSP-Datei anpassen, starten Sie den Dienst mit
 ```
 sudo systemctl restart webware.service
