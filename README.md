@@ -20,6 +20,8 @@ Für einen ersten Test verwenden Sie die Bash-Scripte.
 
 Damit der Webserver von "lwPDFServer.sh" netzwerkweit erreichbar ist, ergänzen Sie im Bash-Script den Start von "webware serve" mit dem Parameter "-l" gefolgt von der IP-Nummer oder dem Namen des Servers. Lassen Sie "-b" weg, damit sich die Webseite nicht automatisch im Browser öffnet.
 
+**Bitte beachten Sie:** Der Webserver Waitress eignet sich für das lokale Netzwerk, genügt aber keinen höheren Sicherheitsansprüchen. Über das Internet sollten Sie diesen Dienst daher nicht bereitstellen. Wer das plant, richtet einen Apache- oder Nginx-Webserver als Reverse-Proxy ein (siehe https://webwareforpython.github.io/w4py3/deploy.html).
+
 **lwPDFKonverter.sh**: Damit wird das wird das Python-Script "lwPDFConverter.py" gestartet. Es überwacht den Ordner "files/in" im Installationsverzeichnis. Sobald neue Dateien in diesem Ordner auftauchen, konvertiert lwPDFKonverter sie automatisch und legt die PDF-Dateien im Ordner "files/out" ab. Wenn Sie die Ordner über Samba im Netzwerk freigeben, können auch Nutzer anderer PCs den Dienst von "lwPDFConverter.py" nutzen.
 
 Im Terminal gestartet, lässt sich die Ausführung mit Strg-C abbgrechen. Libre-Office-Server sollte damit ebenfalls beendet werden. Wenn nicht, lässt sich das Program über "LO_shutdown.sh" beenden.
