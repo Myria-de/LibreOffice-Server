@@ -24,7 +24,7 @@ Damit der Webserver von "lwPDFServer.sh" netzwerkweit erreichbar ist, ergänzen 
 
 Im Terminal gestartet, lässt sich die Ausführung mit Strg-C abbgrechen. Libre-Office-Server sollte damit ebenfalls beendet werden. Wenn nicht, lässt sich das Program über "LO_shutdown.sh" beenden.
 
-Als Demo und zum Vergleich dient das Script **"convert-to-cli.sh"**. Es verwendet im Terminal Optionen für die Kommandozeile, um eine Datei zu konvertieren. Rufen Sie es mit 
+Als Demo und zum Vergleich dient das Script **"convert-to-cli.sh"**. Es verwendet im Terminal Optionen für die Kommandozeile, um eine Datei mit Libre Office zu konvertieren. Rufen Sie es mit 
 ```
 ./convert-to-cli.sh Dokument.odt
 ```
