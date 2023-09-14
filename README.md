@@ -77,6 +77,17 @@ In der Datei "~/lwPDF/lwPDFServer.sh" passen Sie den Aufruf von Webware für den
 exec $SCRIPTPATH/libreoffice/program/python $SCRIPTPATH/libreoffice/program/$PYVER/bin/webware serve -l [host] --prod
 ```
 Den Platzhalter "[host]" ersetzen Sie durch den Namen des Servers oder seine IP-Nummer. Ohne diese Angabe ist der Server nur über "http://127.0.0.1:8080/" (localhost) erreichbar.
+**Bitte beachten Sie:** Webware speichert die Scripte in einem Cache. Wenn Sie eine PSP-Datei anpassen, starten Sie den Dienst mit
+```
+sudo systemctl restart webware.service
+```
+neu.
+
+Der Dienst "lwPDFKonverter.service" enthält für den Programmstart die Zeile
+```
+ExecStart=/bin/bash -c "cd $HOME/lwPDF; exec libreoffice/program/python lwPDFConverter.py"
+```
+Es ist notwendig, zuerst in das Arbeitsverzeichnis "lwPDF" zu wechseln, damit das Python-Script die Ordner "in" und "out" findet.
 
 **Unter Windows:** 
 Verwenden Sie die Aufgabenplanung zum Start der Anwendungen. Erstellen Sie die Aufgabe in einer Eingabeaufforderung.
@@ -93,15 +104,3 @@ schtasks /create /tn "RunPDFKonverter" /sc onstart /ru system /tr "cmd.exe /c C:
 ```
 schtasks /create /tn "RunGetWeather" /tr "cmd.exe /c C:\pcwPDF\pcwGetWeatherData.bat" /sc daily /sd 01/01/2023 /st 12:00
 ```
-**Bitte beachten Sie:** Webware speichert die Scripte in einem Cache. Wenn Sie eine PSP-Datei anpassen, starten Sie den Dienst mit
-```
-sudo systemctl restart webware.service
-```
-neu.
-
-Der Dienst "lwPDFKonverter.service" enthält für den Programmstart die Zeile
-```
-ExecStart=/bin/bash -c "cd $HOME/lwPDF; exec libreoffice/program/python lwPDFConverter.py"
-```
-Es ist notwendig, zuerst in das Arbeitsverzeichnis "lwPDF" zu wechseln, damit das Python-Script die Ordner "in" und "out" findet.
-
