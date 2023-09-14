@@ -78,6 +78,20 @@ exec $SCRIPTPATH/libreoffice/program/python $SCRIPTPATH/libreoffice/program/$PYV
 ```
 Den Platzhalter "[host]" ersetzen Sie durch den Namen des Servers oder seine IP-Nummer. Ohne diese Angabe ist der Server nur über "http://127.0.0.1:8080/" (localhost) erreichbar.
 
+**Unter Windows:** 
+Verwenden Sie die Aufgabenplanung zum Start der Anwendungen. Erstellen Sie die Aufgabe in einer Eingabeaufforderung.
+**pcwPDF_Server:**
+```
+schtasks /create /tn "RunPDFServer" /sc onstart /ru system /tr "cmd.exe /c C:\pcwPDF\pcwPDF_Server.bat"
+```
+**pcwPDFKonverter:**
+```
+schtasks /create /tn "RunPDFKonverter" /sc onstart /ru system /tr "cmd.exe /c C:\pcwPDF\pcwPDFKonverter.bat"
+```
+**pcwGetWeatherData:**
+```
+schtasks /create /tn "RunGetWeather" /tr "cmd.exe /c C:\pcwPDF\pcwGetWeatherData.bat" /sc daily /sd 01/01/2023 /st 12:00
+```
 **Bitte beachten Sie:** Webware speichert die Scripte in einem Cache. Wenn Sie eine PSP-Datei anpassen, starten Sie den Dienst mit
 ```
 sudo systemctl restart webware.service
