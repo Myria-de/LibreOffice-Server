@@ -22,6 +22,14 @@ Damit der Webserver von "lwPDFServer.sh" netzwerkweit erreichbar ist, ergänzen 
 
 **lwPDFKonverter.sh**: Damit wird das wird das Python-Script "lwPDFConverter.py" gestartet. Es überwacht den Ordner "files/in" im Installationsverzeichnis. Sobald neue Dateien in diesem Ordner auftauchen, konvertiert lwPDFKonverter sie automatisch und legt die PDF-Dateien im Ordner "files/out" ab. Wenn Sie die Ordner über Samba im Netzwerk freigeben, können auch Nutzer anderer PCs den Dienst von "lwPDFConverter.py" nutzen.
 
+Im Terminal gestartet, lässt sich die Ausführung mit Strg-C abbgrechen. Libre-Office-Server sollte damit ebenfalls beendet werden. Wenn nicht, lässt sich das Program über "LO_shutdown.sh" beenden.
+
+Als Demo und zum Vergleich dient das Script "convert-to-cli.sh". Es verwendent im Terminal Optionen für die Kommandozeile, um eine Datei zu konvertieren. Rufen Sie es mit 
+```
+./convert-to-cli.sh Dokument.odt
+```
+auf. 
+
 ## Zusätzliche Beispiele für Webware
 Die Webanwendung "lwPDFServer" enthält zwei weitere Funktionen, die Sie über die Links auf der Webseite aufrufen. "Suche in ODT-Dateien" ("search.psp") führt zu einem Formular, in das Sie einen Ordner mit Writer-Dateien und darunter einen Suchbegriff eintragen. Nach einem Klick auf "Senden" liefert das Script eine Liste aller Dateien, in denen der Begriff vorkommt, sowie den Kontext um den Begriff herum. Unterverzeichnisse werden berücksichtigt.
 
