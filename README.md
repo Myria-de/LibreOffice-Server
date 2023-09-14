@@ -22,6 +22,8 @@ Damit der Webserver von "lwPDFServer.sh" netzwerkweit erreichbar ist, ergänzen 
 
 **Bitte beachten Sie:** Der Webserver Waitress eignet sich für das lokale Netzwerk, genügt aber keinen höheren Sicherheitsansprüchen. Über das Internet sollten Sie diesen Dienst daher nicht bereitstellen. Wer das plant, richtet einen Apache- oder Nginx-Webserver als Reverse-Proxy ein (siehe https://webwareforpython.github.io/w4py3/deploy.html).
 
+![402_02_LO_Konverter](https://github.com/Myria-de/LibreOffice-Server/assets/6861591/c54ab373-2a48-4be2-8421-b8a7c28591c6)
+
 **lwPDFKonverter.sh**: Damit wird das wird das Python-Script "lwPDFConverter.py" gestartet. Es überwacht den Ordner "files/in" im Installationsverzeichnis. Sobald neue Dateien in diesem Ordner auftauchen, konvertiert lwPDFKonverter sie automatisch und legt die PDF-Dateien im Ordner "files/out" ab. Wenn Sie die Ordner über Samba im Netzwerk freigeben, können auch Nutzer anderer PCs den Dienst von "lwPDFConverter.py" nutzen.
 
 Im Terminal gestartet, lässt sich die Ausführung mit Strg-C abbgrechen. Libre-Office-Server sollte damit ebenfalls beendet werden. Wenn nicht, lässt sich das Program über "LO_shutdown.sh" beenden.
