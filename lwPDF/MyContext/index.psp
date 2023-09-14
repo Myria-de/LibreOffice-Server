@@ -1,0 +1,342 @@
+<%@ page imports = "sys,os,time"%><%-- Here's the modules that I need in this file. --%>
+<%@ page isInstanceSafe="yes" %><%-- Each instance of this class can be used multiple times. --%>
+
+<!DOCTYPE html>
+<html lang="de">
+<meta charset="UTF-8" />
+<head>
+<!-- <meta charset="UTF-8" /> -->
+<title>Konvertierungsserver</title>
+<link rel="stylesheet" type="text/css" href="site.css" />
+<style type="text/css">
+.style2 {
+	background-color: #FFFFCC;
+}
+</style>
+
+<%
+######## Konfiguration der Exportfilter ############
+
+extlist_doc = {'.ods': 'calc_pdf_Export',
+               '.xls': 'calc_pdf_Export',
+               '.png2': 'draw_pdf_Export',
+               '.jpg': 'draw_pdf_Export',
+               '.ppt': 'impress_pdf_Export',
+               }                              
+extlist_html = {'.ods': 'HTML (StarCalc)',
+               '.xls': 'HTML (StarCalc)',
+               '.png': 'draw_html_Export',
+               '.jpg': 'draw_html_Export',
+               '.ppt': 'impress_html_Export',
+               }
+extlist_txt = {'.ods': 'Text - txt - csv (StarCalc)',
+               '.xls': 'Text - txt - csv (StarCalc)',
+               '.odt': 'Text (encoded)',
+              }
+######## Konfiguration der Exportfilter Ende ############              
+colors = (255, 255, 255), (0, 0, 0), (0, 0, 255), (255, 0, 0)
+white, black, blue, red = range(4)                
+
+####### config end ###########
+Deny_Print = False
+errormsg=""
+export_format=""
+ContentType=""
+
+#Properties für StarOffice-Objekte
+def UnoProps(**args):
+	props = []
+	for key in args:
+		prop = PropertyValue()
+		prop.Name = key
+		prop.Value = args[key]
+		props.append(prop)
+	return tuple(props)
+
+# Hauptprogramm
+disabled='disabled'
+DL_URL='""'
+DL_NAME='""'
+if self.request().hasField('userfile'): # Die Datei wurde gesendet
+	f = self.request().field('userfile')
+	fname=""
+	try:
+		fname = f.filename # Ein Dateiname wurde übergeben
+	except AttributeError:
+		errormsg="Fehler: Sie müssen einen Dateinamen angeben."
+
+if self.request().hasField('userfile') and fname!='':
+	import uno, string, re
+	import unohelper 
+	from io import BytesIO
+	# Aliases for URL encoding and decoding functions:
+	from urllib.parse import quote_plus as urlEncode, unquote_plus as urlDecode
+	from com.sun.star.beans import PropertyValue
+
+	errormsg=""
+	
+	#temporäre Datei erzeugen
+	(up_path, up_file) = os.path.split(f.filename)
+	psep=os.path.sep
+	FileToConvert=os.getcwd()+psep+'temp'+psep+up_file
+	tempfile = open(FileToConvert, 'wb')
+	tempfile.write(f.value)
+	tempfile.close()
+	
+	#Dateiname für die exportierte Datei
+	fo = req.field('formats')
+	ext = fo.lower()   
+	url = os.getcwd()+psep+'temp'+psep+up_file
+	url_req = url + "." + ext
+	url_save = uno.systemPathToFileUrl(url + "." + ext)
+	(basename, extension) = os.path.splitext(up_file)     
+	extension = extension.lower()        
+	file_save = basename + "." + ext 
+	
+# Dateiformat anhand der Endung ermitteln und passenden Exportfilter wählen
+	if fo == "PDF":
+		ContentType = 'application/pdf'
+		if extension in extlist_doc:		
+			export_format = extlist_doc[extension]
+		else:
+			export_format = 'writer_pdf_Export'
+	if fo == "HTML":
+		ContentType = 'test/html'
+		if extension in extlist_html:
+			export_format = extlist_html[extension]
+		else:  
+			export_format = 'HTML (StarWriter)'
+	if fo== "DOC":
+		ContentType = 'application/msword'
+		export_format = 'MS Word 97'
+	if fo == "RTF":
+		ContentType = 'text/rtf'
+		export_format = 'Rich Text Format'
+	if fo == "TXT":
+		if extension in extlist_txt:
+			ContentType = 'text/plain'
+			export_format = extlist_txt[extension]
+	# Fehler und Abbruch
+	if export_format == '':
+		errormsg="Fehler: Das Dateiformat wird nicht unterstützt."
+		if os.path.exists(FileToConvert):
+			os.remove(FileToConvert)
+		
+	else:
+		#Optionen lesen und zugehörige Eigenschaften setzen
+		properties =[]
+		if req.field('pwdopen')!='':          
+			p=PropertyValue()
+			p.Name = "EncryptFile"
+			p.Value = True
+			properties.append(p)
+			p=PropertyValue()       
+			p.Name="DocumentOpenPassword"
+			p.Value=req.field('pwdopen')
+			properties.append(p)
+			
+		if req.field('DenyPrint', None):
+			Deny_Print=True
+			
+		if req.field('pwdpermissions')!='':       
+			p=PropertyValue()
+			p.Name = "RestrictPermissions"
+			p.Value = True
+			properties.append(p)
+			p=PropertyValue()
+			p.Name = "PermissionPassword"
+			p.Value = req.field('pwdpermissions')
+			properties.append(p)
+			if Deny_Print:
+				p=PropertyValue()
+				p.Name = "Printing"
+				p.Value = 0
+				properties.append(p)
+
+		if req.field('numpages')!='':
+			p=PropertyValue()
+			p.Name = "PageRange"
+			p.Value = req.field('numpages')
+			properties.append(p)
+		   
+		if req.field('tagged', None):
+			p=PropertyValue()
+			p.Name = "UseTaggedPDF"
+			p.Value = True
+			properties.append(p)
+		
+		# Verbindung zu LibreOffice-Server herstellen
+		context = uno.getComponentContext()
+		resolver = context.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", context)
+		ctx = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
+
+		loadproperties = UnoProps(Hidden=True)      
+		smgr = ctx.ServiceManager
+		desktop = smgr.createInstanceWithContext("com.sun.star.frame.Desktop",ctx)
+		cwd = unohelper.systemPathToFileUrl( os.getcwd() )
+		url = unohelper.absolutize(cwd, unohelper.systemPathToFileUrl(FileToConvert))
+		try:
+			doc = desktop.loadComponentFromURL(url, "_blank", 0, loadproperties)
+			outproperties = UnoProps(FilterName=export_format, Hidden=True, Overwrite=True)
+		except:
+			print("Fehler beim Lesen.") 
+		if properties:
+			outproperties += ( PropertyValue( "FilterData", 0, uno.Any("[]com.sun.star.beans.PropertyValue", tuple( properties ), ), 0 ), )
+		try:
+			doc.storeToURL(url_save, outproperties)
+		except:
+			print("Fehler beim Schreiben.") 
+		#fertig
+		doc.dispose()
+		url_req=urlEncode(url_req)
+		file_save=urlEncode(file_save)
+		#enable_button()
+		disabled=""
+
+		DownloadFile='Download.py?filename=' + url_req + '&file_save=' + file_save + '&content_type=' + ContentType 
+		DL_URL='"' + DownloadFile +'"'
+		DL_NAME='"' + file_save +'"'
+		# temporäre Datei entfernen
+		if os.path.exists(FileToConvert):
+			os.remove(FileToConvert)
+%>
+</head>
+
+<body class="body">
+<div id="masthead" class="header">
+	<h1>LibreOffice-Konvertierungsserver</h1>
+</div>
+<div id="top_nav">
+</div>
+<div id="container">
+	<div id="left_col">
+		<strong>Anleitung:<br />
+		</strong>Wählen Sie eine Datei zum Konvertieren und ein Ausgabeformat 
+		aus. <br />
+		<br />
+		<strong>Nur bei PDF-Dateien:</strong> Bei Bedarf können Sie Kennwörter für 
+		das Öffnen der Datei und zum Ändern der Zugriffsrechte vergeben. 
+		Außerdem lässt sich die Anzahl der zu konvertierenden Seiten bestimmen, 
+		beispielsweise &quot;1-2&quot; für die erste und zweite Seite. Bei anderen 
+		Zielformaten sind diese Angaben ohne Wirkung.</div>
+	<div id="page_content" style="left: 0px; top: 1px">
+		
+		<form enctype="multipart/form-data" action="index.psp" method="post" target="_self" name="MainForm">
+			<table cellspacing="0" cellpadding="0" class="tab1">
+			<tr>
+            <td><label for="formats">Ausgabeformat:</label></td>
+					<td>
+					<select name="formats">
+					<option selected="selected">PDF</option>
+					<option>HTML</option>
+					<option>DOC</option>
+					<option>RTF</option>
+					<option>TXT</option>
+					</select></td>
+			</tr>
+							<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+			
+				<tr>
+				
+				<td><label for="userfile">Datei auswählen:</label></td>
+					<td colspan="2"><input name="userfile" type="file" size="50" required onchange="form.submit()"/></td>
+					<td>&nbsp;</td>
+				</tr>
+
+	
+					<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+				<td>
+
+
+                <input type="hidden" id="DL_URL" value=<%=DL_URL%> />
+				<input type="hidden" id="DL_FILENAME" value=<%=DL_NAME%> />
+				<button type="button" id="DL_BUTTON" <%= disabled %>>Datei herunterladen</button>
+				<!-- </a> -->
+				</td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">&nbsp;</td>
+					<td class="style1" >&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1"><strong>Optionen (nur PDF):</strong></td>
+					<td class="style1">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">Öffnen-Kennwort:
+					</td>
+					<td class="style1" >
+					<input  name="pwdopen" type="text" size="30" /></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">Rechte-Kennwort:</td>
+					<td class="style1" style="height: 24px"><input name="pwdpermissions" type="text" size="30"/></td>
+					<td style="height: 24px"></td>
+				</tr>
+				<tr>
+					<td class="style1" ><label for="numpages">Anzahl der Seiten:</label></td>
+					<td class="style1" ><input name="numpages" type="text" size="30"/></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1" ><label for="DenyPrint">Drucken verbieten:</label></td>
+					<td class="style1"><input name="DenyPrint" type="checkbox" value="yes"/>(erfordert Rechte-Kennwort)</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td  class="style1" ><label for="tagged">Tagged PDF:</label></td>
+					<td  class="style1" ><input name="tagged" type="checkbox" value="yes" /></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">&nbsp;</td>
+					<td class="style1" >&nbsp;</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<p class="errormsg">
+<%= errormsg %>
+</p>
+<p><a href="search.psp">Suche in ODT-Dateien</a></p>
+<p><a href="weather.psp">Wetterdaten abrufen</a></p>
+<div id="footer">
+LinuxWelt PDF-Server Version 2.4: <a href="http://www.pcwelt.de">www.pcwelt.de</a></div>
+<script>
+            function download(file, text) {
+                var element = document.createElement('a');
+                element.setAttribute('href',text);
+                element.setAttribute('download', file);
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+				//Nach dem Download Button deaktivieren
+                var dl_button=document.getElementById("DL_BUTTON")
+                dl_button.setAttribute('disabled', 'disabled');
+            }
+             
+            document.getElementById("DL_BUTTON")
+            .addEventListener("click", function() {
+                var dl_url = document.getElementById("DL_URL").value;
+                var dl_name = document.getElementById("DL_FILENAME").value;
+
+                download(dl_name, dl_url);
+            }, false);
+         </script>
+
+</body>
+</html>

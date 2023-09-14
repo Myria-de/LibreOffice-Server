@@ -1,0 +1,16 @@
+*~
+*.bak
+*.default
+*.log
+*.patch
+*.pstats
+*.pyc
+*.ses
+*.swp
+
+__pycache__/
+
+/Cache/
+/ErrorMsgs/
+/Logs/
+/Sessions/

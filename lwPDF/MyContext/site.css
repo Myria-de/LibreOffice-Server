@@ -1,0 +1,70 @@
+﻿/* CSS-Layout */
+#masthead {
+}
+
+#top_nav {
+}
+
+#container {
+	position: relative;
+	width: 100%;
+	height: 360px;
+}
+#left_col {
+	padding: 5px 5px 5px 5px;
+	margin: 0px;
+	width: 180px;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	background-color: #F1F1F1;
+}
+#page_content {
+	padding: 5px 5px 0px 5px;
+	margin-left: 190px;
+	position: absolute;
+	height: 400px;
+	width: 600px;
+}
+#footer {
+	font-family: Verdana, Arial, Helvetica, Sans-Serif;
+	font-size: 90%;
+	padding: 5px;
+	background-color: #FF9966;
+}
+.header {
+	background-color: #FF9966;
+}
+.body {
+	font-family: Verdana, Arial, Helvetica, Sans-Serif;
+	font-size: 80%;
+}
+.style1 {
+	background-color: #FFFFCC;
+	vertical-align: middle;
+	padding: 0 0 0 10px;
+	margin: 5px;
+}
+.tab1 {
+	font-family: Verdana, Arial, Helvetica, Sans-Serif;
+	font-size: 100%;
+}
+
+.green {
+background-color: green;
+color:white;
+}
+
+.orange {
+background-color: #FF9966;
+color:black;
+}
+
+.red {
+background-color: #FFFFFF;
+color:red;
+}
+.errormsg {
+background-color: #FFFFFF;
+color:red;
+}

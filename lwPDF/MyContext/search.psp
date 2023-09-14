@@ -1,0 +1,363 @@
+<%@ page imports = "sys,os,time"%><%-- Here's the modules that I need in this file. --%>
+<%@ page isInstanceSafe="yes" %><%-- Each instance of this class can be used multiple times. --%>
+
+<!DOCTYPE html>
+<html lang="de-DE" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="de" />
+<title>ODT-Suche</title>
+
+<link rel="stylesheet" type="text/css" href="site.css" />
+<style type="text/css">
+.style2 {
+	background-color: #FFFFCC;
+}
+</style>
+
+</head>
+<% 
+import codecs
+input_userdir='""'
+input_searchterm='""'
+case_checked=''
+delete_checked=''
+ignorecase=''
+only_found_checked=''
+only_found=''
+# Cookies lesen
+def read_cookie(cookie_name):
+	cookie_value='""'
+	for name, value in req.cookies().items():
+		if name == cookie_name:
+			cookie_value=codecs.decode(value, 'unicode_escape')
+	return cookie_value 
+# Cookies setzen
+def read_set_cookie(cookie_name):
+	if self.request().fields(): 
+		if self.request().hasField(cookie_name):
+			if self.request().field(cookie_name, None):
+				form_value=self.request().field(cookie_name,None)
+				res.setCookie(cookie_name,form_value)
+				return form_value
+			else:
+				res.setCookie(cookie_name,'')
+		else:
+			if cookie_name == 'case':
+				res.delCookie('case');
+			if cookie_name == 'del_cookies':
+				res.delCookie('del_cookies');
+			if cookie_name == 'OnlyFound':
+				res.delCookie('OnlyFound');
+	else:
+		return read_cookie(cookie_name)
+
+input_userdir=read_set_cookie('userdir')
+input_searchterm=read_set_cookie('searchterm')
+if read_set_cookie('case') == "yes":
+	ignorecase="yes"
+	case_checked='checked'
+else:
+	ignorecase="no"
+	case_checked=''
+
+if read_set_cookie('OnlyFound') == "yes":
+	only_found="yes"
+	only_found_checked='checked'
+else:
+	only_found="no"
+	only_found_checked=''
+	
+if read_set_cookie('del_cookies') == "yes":
+	delete_checked=''
+	input_userdir='""'
+	input_searchterm='""'
+	case_checked=''
+	ignorecase="no"
+	only_found_checked=''
+	only_found="no"
+	res.delCookie('del_cookies');
+	
+else:
+	delete_checked=""
+%>
+
+
+<body class="body">
+<div id="masthead" class="header">
+	<h1>ODT-Suche (Textdokumente)</h1>
+</div>
+<div id="top_nav">
+</div>
+<div id="container">
+	<div id="left_col">
+		<strong>Anleitung:<br />
+		</strong>
+		Geben Sie den Pfad zu einem Ordner an, in dem die Dateien liegen, die durchsucht werden sollen. Auch Unterverzeichnisse werden berücksichtigt. Die Suche erfolgt nur in *.odt-Dateien.
+		<br /><br />
+		Die Dokumente werden nach "Suchbegriff" durchsucht. Dabei wird nicht zwischen Groß- und Kleinschreibung unterschieden, wenn ein Häkchen hinter "Groß-/Kleinschreibung ignorieren" gesetzt ist. Das Suchergebnis enthält auch Zeilen, in denen nur ein Teil des Begriffs vorkommt.
+		</div>
+	<div id="page_content" style="left: 0px; top: 1px">
+		<strong>Ordner angeben:<br />
+		</strong>
+		<form ID="InputForm" enctype="multipart/form-data" action="search.psp" method="post">
+			<table cellspacing="0" cellpadding="0" class="tab1">
+				<tr>
+					<td colspan="2">
+
+					<input name="userdir" type="text" size="50" value=<%= input_userdir %> />
+
+					</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					
+					<strong>Suchbegriff:</strong><br />
+					<input name="searchterm" type="text" size="50" value=<%=input_searchterm %> />
+					</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td><input name="send" type="submit" value="Senden" accesskey="s" /></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">&nbsp;</td>
+					<td class="style1" >&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1"><strong>Optionen:</strong></td>
+					<td class="style1">&nbsp;</td>
+				</tr>
+
+
+				<tr>
+					<td  class="style1" ><label for="case">Groß-/Kleinschreibung ignorieren:</label></td>
+					<td  class="style1" ><input id="CaseCheck" name="case" type="checkbox" value="yes" <%= case_checked %>/></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td  class="style1" ><label for="OnlyFound">Nur gefundene Dateien/Ergebnisse anzeigen:</label></td>
+					<td  class="style1" ><input id="OnlyFound" name="OnlyFound" type="checkbox" value="yes" <%= only_found_checked %>/></td>
+					<td>&nbsp;</td>
+				</tr>
+					<tr>
+					<td  class="style1" ><label for="del_cookies">Alle Cookies löschen</label></td>
+					<td  class="style1" ><input id="DeleteCookies" name="del_cookies" type="checkbox" value="yes" <%= delete_checked %>/></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">&nbsp;</td>
+					<td class="style1" >&nbsp;</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<br />
+<br />
+
+<%
+import unohelper
+from io import BytesIO
+from contextlib import redirect_stdout
+from com.sun.star.io import IOException, XOutputStream
+SomethingFound="no"
+
+def toProperties(**args):
+	props = []
+	for key in args:
+		prop = PropertyValue()
+		prop.Name = key
+		prop.Value = args[key]
+		props.append(prop)
+	return tuple(props)
+
+# Datenstream des geöffneten Dokuments verarbeiten
+class OutputStreamWrapper(unohelper.Base, XOutputStream):
+	def __init__(self, debug=True):
+		self.debug = debug
+		self.data = BytesIO()
+		self.position = 0
+		if self.debug:
+			sys.stderr.write("__init__ OutputStreamWrapper.\n")
+
+	def writeBytes(self, bytes):
+		if self.debug:
+			sys.stderr.write("writeBytes %i bytes.\n" % len(bytes.value))
+		self.data.write(bytes.value)
+		self.position += len(bytes.value)
+
+	def close(self):
+		if self.debug:
+			sys.stderr.write("Closing output. %i bytes written.\n" % self.position)
+		self.data.close()
+
+	def flush(self):
+		if self.debug:
+			sys.stderr.write("Flushing output.\n")
+		pass
+	def closeOutput(self):
+		if self.debug:
+			sys.stderr.write("Closing output.\n")
+		pass
+
+class OutputStream(unohelper.Base, XOutputStream):
+	def __init__(self):
+		self.closed = 0
+
+	def closeOutput(self):
+		self.closed = 1
+
+	def writeBytes(self, seq):
+		try:
+			sys.stdout.buffer.write(seq.value)
+		except AttributeError:
+			sys.stdout.write(seq.value)
+
+	def flush(self):
+		pass
+
+# In Dateien suchen
+def ODTSearch(userfile, searchterm,only_found):
+	if only_found == "yes":
+		ShowOnlyPositiveResults='yes'
+	else:
+		ShowOnlyPositiveResults='no'
+	if os.path.isfile(userfile):
+		(up_path, up_file) = os.path.split(userfile)	 
+		cwd = unohelper.systemPathToFileUrl( os.getcwd() )
+		url = unohelper.absolutize(cwd, unohelper.systemPathToFileUrl(userfile))
+		if sys.platform == "win32":
+			import msvcrt
+			msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+		url_save = "private:stream"
+
+		# Verbindung zu LibreOffice aufbauen
+		context = uno.getComponentContext()
+		resolver = context.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", context)
+		ctx = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
+		loadproperties = {"Hidden": True}
+		loadprops = toProperties(**loadproperties)
+		smgr = ctx.ServiceManager
+		desktop = smgr.createInstanceWithContext("com.sun.star.frame.Desktop",ctx)
+		cwd = unohelper.systemPathToFileUrl( os.getcwd() )
+		url = unohelper.absolutize(cwd, unohelper.systemPathToFileUrl(userfile))
+		# Datei öffnen
+		try:
+			doc = desktop.loadComponentFromURL(url, "_blank", 0, loadprops)
+		except:
+			print("Fehler beim Lesen.")
+			res.write('<p class="red">Fehler beim Lesen von: '  + userfile + '</p>')
+		export_format="Text (encoded)"
+		outputStream  = OutputStreamWrapper(False)
+		properties = {"OutputStream": outputStream}
+		filter_name="Text (encoded)"
+		properties.update({"FilterName": filter_name})
+		properties.update({"FilterOptions": "UTF8"})
+		props = toProperties(**properties)
+		# Dateiinhalt in einem Stream speichern
+		try:
+			doc.storeToURL(url_save, props)
+		except:
+			print("Fehler beim Speichern.") 
+			res.write('<p class="red">Fehler beim Speichern von: '  + userfile + '</p>')
+			
+		openDocumentBytes = outputStream.data.getvalue()
+		outputStream.close()
+		output = codecs.decode(openDocumentBytes)
+		if output != "":
+			doc.dispose()
+			doc.close(True)
+		out=""
+		# Text vor und hinter dem Suchbegriff 20 Zeichen
+		startend=20
+		count=0
+		start=startend
+		end=startend
+		# Dateiinhalt durchsuchen
+		out=output
+		if not ShowOnlyPositiveResults == 'yes':
+			res.write('<p class="green">Suche in: '  + userfile + '</p>')
+		# Suche im Text
+		if ignorecase == 'yes':
+			dosearch = re.compile(searchterm, re.IGNORECASE)
+		else:
+			dosearch = re.compile(searchterm)
+					
+		for m in dosearch.finditer(out):
+			
+			if m.start() > startend:
+				start=startend
+			if m.end() < len(out)-startend:
+				end=startend
+			count += 1
+			if ShowOnlyPositiveResults == 'yes':
+				res.write('<p class="green">Suche in: '  + userfile + '</p>')
+			res.write('<span class="orange">Gefunden:</span> ' + repr(count) + '</br>')
+			if m.start() < startend:
+				start=m.start()
+			res.write(out[m.start()-start:m.end()+end])
+			res.write('</br>')
+		if count==0:
+			return "no"
+			if not ShowOnlyPositiveResults == 'yes':
+				res.write('<span class="orange">Begriff nicht gefunden</span></br>')
+		else:
+			return "yes"
+	else:
+		res.write("Datei nicht gefunden")
+
+# Hauptprogramm
+Found = "no"
+SomethingFound = "no"
+
+if self.request().hasField('del_cookies'):
+	if self.request().field('del_cookies', None):
+		res.delCookie('userdir');
+		res.delCookie('searchterm');
+		res.delCookie('case');
+		res.delCookie('OnlyFound');
+
+if self.request().hasField('userdir'):
+	if self.request().field('userdir')!='':
+		import sys
+		import uno, os, string, re
+		from io import StringIO 
+		from com.sun.star.beans import PropertyValue
+		from com.sun.star.beans.PropertyState import DIRECT_VALUE
+
+		userdir=self.request().field('userdir')
+		searchterm=self.request().field('searchterm')
+		# Dateiliste erstellen
+		for root, dirs, files in os.walk(userdir):
+			for file in files:
+				if file.endswith(".odt"):
+					#Rekursiv durchsuchen
+					Found=ODTSearch(os.path.join(root, file),searchterm,only_found)
+					print ("Suche in Datei:" + os.path.join(root, file))
+					if Found == "yes":
+						SomethingFound = "yes"
+		if SomethingFound == "no":
+			res.write('<span class="orange">Nichts gefunden</span></br>')
+%>
+<br/>
+<p>&nbsp;</p>
+
+<p><a href="index.psp">LibreOffice-Konvertierungsserver</a></p>
+<p><a href="weather.psp">Wetterdaten abrufen</a></p>
+<div id="footer">
+ODT-Suche Version 2.4: <a href="http://www.pcwelt.de">www.pcwelt.de</a></div>
+</body>
+</html>

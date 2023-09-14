@@ -1,0 +1,16 @@
+[Unit]
+Description=Control headless soffice instance
+Requires=systemd-modules-load.service
+After=network.target systemd-modules-load.service
+
+[Service]
+Type=simple
+# Benutzer und Gruppe anpassen
+User=te
+Group=te
+# Bei Bedarf Verzeichnis anpassen
+ExecStart=/usr/bin/bash -c "exec $HOME/lwPDF/libreoffice/program/soffice --headless --nologo --nodefault --nofirststartwizard --accept='socket,host=localhost,port=2002;urp;'"
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
