@@ -12,7 +12,7 @@ Die Installation von Libre Office erfolgt unter Linux über ein Bash-Script, das
 ```
 starten. Es lädt die Version 24.2 herunter. Da sich die Download-Adressen bei neueren Versionen ändern, sehen Sie auf https://download.documentfoundation.org/libreoffice/stable nach, ob die Angaben im Script noch stimmen. Wenn nötig, ändern Sie die Versionsnummern im Konfigurationsbereich des Scripts. Das Script lädt die Dateien herunter und speichert Libre Office im Ordner "~/lwPDF/libreoffice".
 
-Anschließend verwenden Sie "2_Get_Python_Modules.sh" aus dem Ordner "install". Sollte sich die Python-Version von Libre Office bei einer neueren Version ändern, passen Sie vorher dei Datei "~/lwPDF/Python_version" an. Wie die Python-Version heißt, erkennen Sie an der Bezeichnung des Ordners "~/lwPDF/libreoffice/program/python-core-[Version]".
+Anschließend verwenden Sie "2_Get_Python_Modules.sh" aus dem Ordner "install". Sollte sich die Python-Version von Libre Office bei einer neueren Version ändern, passen Sie vorher die Datei "~/lwPDF/Python_version" an. Wie die Python-Version heißt, erkennen Sie an der Bezeichnung des Ordners "~/lwPDF/libreoffice/program/python-core-[Version]".
 
 Das Script installiert zuerst PIP (Package Installer for Python) in Libre Office, über das sich weitere Module herunterladen lassen. Alle zusätzlich installierten Dateien liegen danach im Ordner "~/lwPDF/libreoffice/program/python-core-3.8.19/lib/python3.8/site-packages".
 
