@@ -6,11 +6,20 @@ import requests
 from time import strftime
 from datetime import datetime
 from com.sun.star.beans import PropertyValue
+import configparser
 
 ### Konfiguration ###
 # API-Key von openweathermap.org
-API_key = ""
-Standort = "Munich"
+#
+config = configparser.ConfigParser()
+config.read("lwPDF/API_KEY.ini")
+API_key = config.get("config", "API_key")
+Standort = config.get("config", "Standort")
+# siehe weiter unten unter "Länge und Breite verwenden"
+lat = config.get("config", "lat")
+lon = config.get("config", "lon")
+# Beispiele
+#Standort = "Munich"
 # oder Länge und Breite
 # dafür URL in getWeather() anpassen
 #lat="48.155709"
@@ -67,7 +76,7 @@ def writeCalc():
 	from com.sun.star.util import Date  #uno-api
 	current_weather=[]
 	psep=os.path.sep
-	doc=getDOC(os.getcwd() + psep + "pcwPDF" + psep + "MyContext" + psep + "data" + psep + "Wetter.ods")
+	doc=getDOC(os.getcwd() + psep + "lwPDF" + psep + "MyContext" + psep + "data" + psep + "Wetter.ods")
 	sheet = doc.Sheets.getByName("Wetter")
 	for row in range(2, 200):
 		value=sheet.getCellByPosition(0, row).getString()
@@ -141,7 +150,7 @@ def writeCalc():
 # Wetterdaten aus Calc-Tabelle lesen
 def readCalc():
 	psep=os.path.sep
-	doc=getDOC(os.getcwd() + psep + "pcwPDF" + psep + "MyContext" + psep + "data" + psep + "Wetter.ods")
+	doc=getDOC(os.getcwd() + psep + "lwPDF" + psep + "MyContext" + psep + "data" + psep + "Wetter.ods")
 	sheet = doc.Sheets.getByName("Wetter")
 	for row in range(2, 200):
 		value=sheet.getCellByPosition(0, row).getString()
@@ -157,7 +166,7 @@ def readCalc():
 
 # Hauptprogramm startet hier
 if API_key == "":
-	print("Fehler: Konfigurieren Sie die Variable API_key im Script.")
+	print("Fehler: Konfigurieren Sie die Variable API_key in der Datei lwPDF/API_KEY.ini.")
 else:
 	print ("Hole Wetterdaten...")
 	writeCalc()

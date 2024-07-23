@@ -1,7 +1,8 @@
 #!/bin/bash
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # Python Version bei Bedarf anpassen
-PYVER=python-core-3.8.17
+# PYVER=python-core-3.8.19
+source ../Python_version
 # Libre Office als Server starten
 lo=$(ps ax | grep "soffice --headless" | grep -v grep)
 if [ "$lo" ]
@@ -18,7 +19,7 @@ PID=$(cat run/soffice.pid)
 echo "LibreOffice mit PID: "$PID" gestartet"
 fi
 
-echo "Starte lwPDFConverter.py. Warte auf Dateien..."
+echo "Starte lwGetWeather.py. Warte auf Dateien..."
 echo "Beenden mit Strg-C"
 libreoffice/program/python lwGetWeather.py
 

@@ -9,7 +9,7 @@ Type=simple
 User=te
 Group=te
 # Bei Bedarf Verzeichnis anpassen
-ExecStart=/usr/bin/bash -c "exec $HOME/lwPDF/libreoffice/program/soffice --headless --nologo --nodefault --nofirststartwizard --accept='socket,host=localhost,port=2002;urp;'"
+ExecStart=/usr/bin/bash -c "cd $HOME/lwPDF; exec $HOME/lwPDF/libreoffice/program/soffice --headless --nologo --nodefault --nofirststartwizard --accept='socket,host=localhost,port=2002;urp;'"
 RestartSec=5
 
 [Install]

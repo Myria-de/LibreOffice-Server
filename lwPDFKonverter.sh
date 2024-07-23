@@ -1,7 +1,8 @@
 #!/bin/bash
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # Python-Version bei Bedarf anpassen
-PYVER=python-core-3.8.17
+# PYVER=python-core-3.8.19
+source ../Python_version
 # LibreOffice als Server starten
 lo=$(ps ax | grep "soffice -headless" | grep -v grep)
 if [ "$lo" ]

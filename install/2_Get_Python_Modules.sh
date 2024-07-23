@@ -1,8 +1,10 @@
 #!/bin/bash
 # Konfiguration #
-# Bei einer anderen Libre-Office-Version als 7.6 bitte anpassen
-PYDIR=python-core-3.8.17
-PYVER=python3.8
+# Bei einer anderen Libre-Office-Version als 24.2.4 bitte
+# in der Datei ../Python_version anpassen
+#PYDIR=python-core-3.8.19
+#PYVER=python3.8
+source ../Python_version
 # Konfiguration Ende #
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 PARENTDIR="$(dirname "$SCRIPTPATH")"
@@ -24,6 +26,8 @@ if [ -e $PARENTDIR/libreoffice/program/python ]
  $PARENTDIR/libreoffice/program/python -m pip install waitress "Webware-for-Python>=3"
  $PARENTDIR/libreoffice/program/python -m pip install matplotlib
  $PARENTDIR/libreoffice/program/python -m pip install requests
+ #fix for the moment "No module named 'numpy.core._multiarray_umath" in numpy
+ $PARENTDIR/libreoffice/program/python -m pip install numpy==1.21.0
 
  # fix .so names ABI
  # LibreOffice-Python uses cpython-XX, while pip uses .cpython-XX-x86_64-linux-gnu.so

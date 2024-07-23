@@ -19,12 +19,12 @@
 Version=1.0
 Terminal=false
 NoDisplay=false
-Icon=libreoffice7.6-startcenter
+Icon=libreoffice24.2-startcenter
 Type=Application
 Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;
-Exec=sh -c "cd $HOME/lwPDF/libreoffice/program && ./libreoffice7.6"
+Exec=sh -c "cd $HOME/lwPDF/libreoffice/program && ./libreoffice24.2"
 MimeType=application/vnd.openofficeorg.extension;x-scheme-handler/vnd.libreoffice.cmis;x-scheme-handler/vnd.sun.star.webdav;x-scheme-handler/vnd.sun.star.webdavs;x-scheme-handler/vnd.libreoffice.command;x-scheme-handler/ms-word;x-scheme-handler/ms-powerpoint;x-scheme-handler/ms-excel;x-scheme-handler/ms-visio;x-scheme-handler/ms-access;
-Name=LibreOffice 7.6
+Name=LibreOffice 24.2
 GenericName=Office
 GenericName[af]=Kantoor
 GenericName[am]=ቢሮ
@@ -270,31 +270,4 @@ X-GIO-NoFuse=true
 StartupWMClass=libreoffice-startcenter
 X-KDE-Protocols=file,http,ftp,webdav,webdavs
 
-##Define Actions
-Actions=Writer;Calc;Impress;Draw;Base;Math;
 
-[Desktop Action Writer]
-Name=Writer
-Exec=libreoffice7.6 --writer
-
-[Desktop Action Calc]
-Name=Calc
-Exec=libreoffice7.6 --calc
-
-[Desktop Action Impress]
-Name=Impress
-Exec=libreoffice7.6 --impress
-
-[Desktop Action Draw]
-Name=Draw
-Exec=libreoffice7.6 --draw
-
-[Desktop Action Base]
-Name=Base
-Exec=libreoffice7.6 --base
-
-[Desktop Action Math]
-Name=Math
-Exec=libreoffice7.6 --math
-
-##End of actions menu

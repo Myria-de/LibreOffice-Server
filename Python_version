@@ -1,0 +1,4 @@
+# Bei einer anderen Libre-Office-Version als 24.2.4 bitte anpassen
+PYDIR=python-core-3.8.19
+PYVER=python3.8
+

@@ -3,14 +3,19 @@
 # Downloads: https://download.documentfoundation.org/libreoffice/
 # Für andere Versionen Versionsnummern, Dateinamen
 # und Download-URL anpassen.
-LOVERSION="7.6.0"
-BASEVERSION="7.6"
-DLBASEVERSION="7.6.0"
+LOVERSION="24.2.5"
+BASEVERSION="24.2"
+DLBASEVERSION="24.2.5"
 DLURL="https://download.documentfoundation.org/libreoffice/stable/${DLBASEVERSION}/deb/x86_64/"
 
 ## Konfiguration Ende ##
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 PARENTDIR="$(dirname "$SCRIPTPATH")"
+
+if [ $UID = "0" ]; then
+ echo "Diese Script bitte nicht als root ausführen"
+ exit 1
+fi
 
 if [ -e $PARENTDIR/libreoffice/program/python ]
  then
@@ -22,11 +27,6 @@ FILEMAIN="LibreOffice_${LOVERSION}_Linux_x86-64_deb"
 FILETRANS="LibreOffice_${LOVERSION}_Linux_x86-64_deb_langpack_de"
 FILEHELP="LibreOffice_${LOVERSION}_Linux_x86-64_deb_helppack_de"
 INSTALLDIR="${SCRIPTPATH}/LO_${LOVERSION}"
-
-if [ $UID = "0" ]; then
- echo "Diese Script bitte nicht als root ausführen"
- exit 1
-fi
 
 if [ ! -d ${INSTALLDIR} ]; then
 mkdir ${INSTALLDIR}
@@ -58,7 +58,7 @@ cd ${INSTALLDIR}/install
 echo "Extrahiere deb-Pakete..."
 for i in $FILELIST; do
   for j in ../$i/DEBS/*.deb; do dpkg-deb -x $j . ; done
-done		
+done
 echo "Passe bootstraprc an"
 cd opt/libreoffice${BASEVERSION}/program
 chmod +w bootstraprc
@@ -72,6 +72,8 @@ mv ${PARENTDIR}/libreoffice${BASEVERSION} ${PARENTDIR}/libreoffice
 #Symlink für .desktop-Datei
 cd $PARENTDIR/libreoffice/program
 ln -s soffice libreoffice$BASEVERSION
+# Desktop-Datei kopieren
+cp $SCRIPTPATH/startcenter.desktop ~/Schreibtisch/startcenter.desktop
 
 #Aufräumen
 cd $SCRIPTPATH

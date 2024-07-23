@@ -42,8 +42,9 @@
 
 <%
 # Konfiguration ##
-#API_key = ""
-Standort = "Munich"
+# Die Konfiguration wird aus der Datei API_KEY.ini gelesen
+# API_key = ""
+# Standort = "Munich"
 # oder Länge und Breite
 # dafür URL in getWeather() anpassen
 #lat="48.155709"
@@ -225,13 +226,22 @@ import uno
 import unohelper
 import requests
 import locale
+import configparser
 from time import strftime
 from datetime import datetime
 from com.sun.star.beans import PropertyValue
 
+config = configparser.ConfigParser()
+config.read("API_KEY.ini")
+API_key = config.get("config", "API_key")
+Standort = config.get("config", "Standort")
+# siehe weiter unten unter "Länge und Breite verwenden"
+lat = config.get("config", "lat")
+lon = config.get("config", "lon")
+
 if self.request().hasField('send'):
 	if API_key == "":
-		res.write("Fehler: Konfigurieren Sie die Variable API_key.")
+		res.write("Fehler: Konfigurieren Sie die Variable API_key in der Datei API_KEY.ini.")
 	else:	
 		writeCalc()
 		readCalc()

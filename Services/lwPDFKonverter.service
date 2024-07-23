@@ -8,7 +8,7 @@ Type=simple
 User=te
 Group=te
 
-# Pfad bei Bedarf anpassen
+# Pfade bei Bedarf anpassen
 ExecStart=/bin/bash -c "cd $HOME/lwPDF; exec libreoffice/program/python lwPDFConverter.py"
 
 [Install]
