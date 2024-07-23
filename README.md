@@ -12,7 +12,11 @@ Die Installation von Libre Office erfolgt unter Linux über ein Bash-Script, das
 ```
 starten. Es lädt die Version 24.2 herunter. Da sich die Download-Adressen bei neueren Versionen ändern, sehen Sie auf https://download.documentfoundation.org/libreoffice/stable nach, ob die Angaben im Script noch stimmen. Wenn nötig, ändern Sie die Versionsnummern im Konfigurationsbereich des Scripts. Das Script lädt die Dateien herunter und speichert Libre Office im Ordner "~/lwPDF/libreoffice".
 
-Anschließend verwenden Sie "2_Get_Python_Modules.sh" aus dem Ordner "install". Sollte sich die Python-Version von Libre Office bei einer neueren Version ändern, passen Sie vorher die Datei "~/lwPDF/Python_version" an. Wie die Python-Version heißt, erkennen Sie an der Bezeichnung des Ordners "~/lwPDF/libreoffice/program/python-core-[Version]".
+Anschließend verwenden Sie "2_Get_Python_Modules.sh" aus dem Ordner "install". Sollte sich die Python-Version von Libre Office bei einer neueren Version ändern, passen Sie vorher die Datei 
+```
+~/lwPDF/Python_version
+```
+an. Wie die Python-Version heißt, erkennen Sie an der Bezeichnung des Ordners "~/lwPDF/libreoffice/program/python-core-[Version]".
 
 Das Script installiert zuerst PIP (Package Installer for Python) in Libre Office, über das sich weitere Module herunterladen lassen. Alle zusätzlich installierten Dateien liegen danach im Ordner "~/lwPDF/libreoffice/program/python-core-3.8.19/lib/python3.8/site-packages".
 
@@ -40,7 +44,11 @@ auf.
 ## Zusätzliche Beispiele für Webware
 Die Webanwendung "lwPDFServer" enthält zwei weitere Funktionen, die Sie über die Links auf der Webseite aufrufen. "Suche in ODT-Dateien" ("search.psp") führt zu einem Formular, in das Sie einen Ordner mit Writer-Dateien und darunter einen Suchbegriff eintragen. Nach einem Klick auf "Senden" liefert das Script eine Liste aller Dateien, in denen der Begriff vorkommt, sowie den Kontext um den Begriff herum. Unterverzeichnisse werden berücksichtigt.
 
-Der Link "Wetterdaten abrufen" öffnet "weather.psp". Die Seite zeigt Wetterdaten aus der Calc-Datei "~/lwPDF/lwPDF/MyContext/data/Wetter.ods" als Tabelle und darunter ein Diagramm mit dem mittleren Temperaturverlauf. Per Klick auf "Wetterdaten abholen" lädt das Script aktuelle Daten über http://api.openweathermap.org herunter. Damit das funktioniert, benötigen Sie einen kostenlosen API-Key, den Sie nach der Anmeldung bei https://openweathermap.org erhalten. Tippen Sie den Schlüssel in die Datei "~/lwPDF/lwPDF/API_KEY.ini" ein. Hinter "Standort" geben Sie den Ort an, für den Sie die Wetterdaten abrufen wollen. Alternativ können Sie auch Längen- und Breitengrad verwenden. In "weather.psp" müssen Sie dafür die Abfrage im Unterprogramm "def getWeather():" anpassen. Ein Beispiel ist als Kommentar enthalten.
+Der Link "Wetterdaten abrufen" öffnet "weather.psp". Die Seite zeigt Wetterdaten aus der Calc-Datei 
+```
+~/lwPDF/lwPDF/MyContext/data/Wetter.ods
+```
+als Tabelle und darunter ein Diagramm mit dem mittleren Temperaturverlauf. Per Klick auf "Wetterdaten abholen" lädt das Script aktuelle Daten über http://api.openweathermap.org herunter. Damit das funktioniert, benötigen Sie einen kostenlosen API-Key, den Sie nach der Anmeldung bei https://openweathermap.org erhalten. Tippen Sie den Schlüssel in die Datei "~/lwPDF/lwPDF/API_KEY.ini" ein. Hinter "Standort" geben Sie den Ort an, für den Sie die Wetterdaten abrufen wollen. Alternativ können Sie auch Längen- und Breitengrad verwenden. In "weather.psp" müssen Sie dafür die Abfrage im Unterprogramm "def getWeather():" anpassen. Ein Beispiel ist als Kommentar enthalten.
 
 **lwGetWeather.sh** ist für einen Cronjob gedacht, der regelmäßig die Wetterdaten abholt und in die Calc-Tabelle schreibt. Auch dafür ist der API-Key aus der Datei "~/lwPDF/lwPDF/API_KEY.ini" erforderlich und für die Abfrage mit Längen- und Breitengrad eine Anpassung im Unterprogramm "def getWeather():".
 
